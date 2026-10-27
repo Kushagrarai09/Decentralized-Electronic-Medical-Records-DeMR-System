@@ -18,10 +18,19 @@ async function enrollAdmin(userType) {
     );
     const ccp = JSON.parse(fs.readFileSync(ccpPath, "utf8"));
     const caInfo = ccp.certificateAuthorities["ca.org1.example.com"];
-    const caTLSCACerts = caInfo.tlsCACerts.pem;
+    const caTLSCACerts = caInfo.tlsCACerts && caInfo.tlsCACerts.pem;
+    if (!caTLSCACerts || (Array.isArray(caTLSCACerts) && caTLSCACerts.length === 0)) {
+      throw new Error(
+        "CA TLS trust certificate is missing from the connection profile. " +
+        "Regenerate the connection profile and verify its CA certificate before provisioning identities."
+      );
+    }
+
+    // Use the CA trust certificate from the generated connection profile.
+    // Keep TLS verification enabled; do not bypass CA server certificate checks.
     const ca = new FabricCAServices(
       caInfo.url,
-      { trustedRoots: caTLSCACerts, verify: false },
+      { trustedRoots: caTLSCACerts, verify: true },
       caInfo.caName
     );
 
@@ -32,7 +41,7 @@ async function enrollAdmin(userType) {
     const identity = await wallet.get("admin");
     if (identity) {
       console.log(
-        `An identity for the admin user "${userType}" already exists in the wallet.`
+        `Admin identity already exists in the wallet; leaving it unchanged (requested account: "${userType}").`
       );
       return;
     }
