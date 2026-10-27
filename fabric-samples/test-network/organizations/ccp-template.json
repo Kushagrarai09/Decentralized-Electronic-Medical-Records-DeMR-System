@@ -42,7 +42,7 @@
                 "pem": ["${CAPEM}"]
             },
             "httpOptions": {
-                "verify": false
+                "verify": true
             }
         }
     }
