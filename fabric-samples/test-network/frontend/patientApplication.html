@@ -167,6 +167,46 @@
       to { opacity: 1; transform: translateY(0); }
     }
   </style>
+  <style>
+    :root { --demr-ink:#16324f; --demr-teal:#087e8b; --demr-bg:#f3f7fb; --demr-muted:#64748b; }
+    body { background:var(--demr-bg); color:#1e293b; }
+    .navbar { position:sticky; top:0; z-index:1030; background:var(--demr-ink); }
+    .jumbotron { background:linear-gradient(120deg,#16324f,#087e8b); padding:34px 12px 52px; }
+    .jumbotron .display-4 { font-size:clamp(1.8rem,4vw,2.5rem); }
+    .jumbotron .lead { color:#e6f4f5; }
+    .custom-card { border:1px solid #e2eaf2; border-radius:16px; box-shadow:0 8px 25px #16324f0b; padding:0; margin-top:0; animation:none; }
+    .register-text { color:var(--demr-ink); font-size:1.3rem; margin-bottom:8px; }
+    .card-body { padding:clamp(18px,3vw,32px); }
+    .card hr { width:100%; border-color:#dbe6ee; margin:14px 0 22px; }
+    .submit-btn { background:var(--demr-teal); box-shadow:none; font-size:.95rem; padding:10px 16px; width:auto; border:none; color:white; font-weight:650; border-radius:9px; transition:background .15s ease; margin:4px; }
+    .submit-btn:hover { background:#06636d; color:white; }
+    .danger-btn { background:#b42318; }
+    .danger-btn:hover { background:#912018; color:white; }
+    .form-control,.form-select { border-radius:9px; padding:10px 13px; }
+    .form-control:focus,.form-select:focus { border-color:var(--demr-teal); box-shadow:0 0 0 .2rem #087e8b22; }
+    .summary-card { border:1px solid #e3ebf3; border-radius:14px; box-shadow:0 5px 18px #16324f0c; min-height:110px; background:white; padding:17px 19px; }
+    .summary-label { color:var(--demr-muted); font-size:.84rem; margin-bottom:5px; }
+    .summary-value { font-size:1.4rem; font-weight:750; color:var(--demr-ink); }
+    .eyebrow { text-transform:uppercase; letter-spacing:.09em; color:#0e7490; font-size:.72rem; font-weight:800; }
+    .section-intro { color:var(--demr-muted); font-size:.94rem; }
+    .dashboard-section { scroll-margin-top:90px; margin-bottom:28px; }
+    .table-responsive { border:1px solid #e2e8f0; border-radius:10px; }
+    #viewAllEMRList,#viewAllUserForEMR,#viewAddAccessList { margin:0; box-shadow:none; width:100%; }
+    #viewAllEMRList th,#viewAllUserForEMR th,#viewAddAccessList th { background:#edf4f8; color:var(--demr-ink); border-color:#e2e8f0; white-space:nowrap; }
+    #viewAllEMRList td,#viewAllEMRList th,#viewAllUserForEMR td,#viewAllUserForEMR th,#viewAddAccessList td,#viewAddAccessList th { font-size:.88rem; padding:11px; border-color:#e2e8f0; overflow-wrap:anywhere; vertical-align:top; }
+    #emrdata { min-height:180px; width:100%; border:1px solid #dbe6ee; border-radius:10px; padding:14px; background:#f8fafc; font-family:inherit; font-size:1rem; }
+    .inline-status { display:none; border-radius:9px; padding:10px 13px; margin:12px 0; font-size:.92rem; }
+    .inline-status.is-loading,.inline-status.is-error,.inline-status.is-success,.inline-status.is-empty { display:block; }
+    .inline-status.is-loading { color:#075985; background:#e0f2fe; }
+    .inline-status.is-error { color:#991b1b; background:#fef2f2; }
+    .inline-status.is-success { color:#166534; background:#f0fdf4; }
+    .inline-status.is-empty { color:#475569; background:#f1f5f9; }
+    .access-actions { display:flex; flex-wrap:wrap; gap:8px; }
+    .access-actions .btn { margin:0; }
+    .footer-note { color:var(--demr-muted); font-size:.84rem; text-align:center; padding:20px 0 30px; }
+    @media (max-width:767px) { .jumbotron { padding:27px 12px 42px; } .custom-card { margin-bottom:12px; } .card-body { padding:18px; } .access-actions .btn { flex:1 1 100%; } .summary-value { font-size:1.25rem; } }
+    @media (prefers-reduced-motion:reduce) { *,*::before,*::after { animation:none!important; scroll-behavior:auto!important; transition:none!important; } }
+  </style>
   <title>Patient Application</title>
 </head>
 <body>
@@ -197,13 +237,23 @@
   <div class="jumbotron jumbotron-fluid">
     <div class="container text-center">
       <h1 class="display-4" style="padding-top: 20px;">Patient Application Portal</h1>
-      <p class="lead">Our Patient application allows you to grant and revoke various accesses.</p>
+      <p class="lead">Your medical records and sharing permissions, all in one place.</p><div class="small text-white-50">DeMR · Patient workspace</div>
     </div>
   </div>
 
   <!-- Info Cards Section -->
-  <div class="container mt-5" id="accessManagementDiv">
-    <div class="row">
+  <div class="container dashboard-shell mt-4">
+  <div class="row g-3 mb-4" aria-label="Patient workspace overview">
+    <div class="col-6 col-lg-3"><div class="summary-card"><div class="summary-label">Workspace</div><div class="summary-value">Patient</div><div class="small text-muted">Personal record view</div></div></div>
+    <div class="col-6 col-lg-3"><div class="summary-card"><div class="summary-label">Health information</div><div class="summary-value">EMR</div><div class="small text-muted">Retrieve records by ID or list</div></div></div>
+    <div class="col-6 col-lg-3"><div class="summary-card"><div class="summary-label">Sharing</div><div class="summary-value">Controls</div><div class="small text-muted">Manage view and add access</div></div></div>
+    <div class="col-6 col-lg-3"><div class="summary-card"><div class="summary-label">API status</div><div class="summary-value" id="connectionSummary">Ready</div><div class="small text-muted">Updates during requests</div></div></div>
+  </div>
+  <nav class="d-flex flex-wrap gap-2 mb-4" aria-label="Patient sections"><a class="btn btn-light border" href="#recordsSection">Medical records</a><a class="btn btn-light border" href="#accessSection">Access management</a><a class="btn btn-light border" href="#permissionsSection">Permissions</a></nav>
+  <div id="patientGlobalStatus" class="inline-status" role="status" aria-live="polite"></div>
+</div>
+  <main class="container" id="accessManagementDiv">
+    <section class="dashboard-section" id="accessSection"><div class="eyebrow mb-1">Privacy controls</div><h2 class="h4 mb-1">Manage access</h2><p class="section-intro mb-3">Confirm the recipient and record before changing permissions.</p><div class="row g-3">
       <div class="col-md-6" id="viewAccessDiv">
         <div class="card text-center custom-card shadow h-100">
           <div class="card-body">
@@ -231,8 +281,8 @@
               <br />
               <div class="mb-3 row">
                 <div class="col-sm-12">
-                  <button type="submit" class="btn submit-btn" id="grantViewB">Grant</button> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-                  <button type="submit" class="btn submit-btn" id="revokeViewB">Revoke</button>
+                  <button type="button" class="btn submit-btn" id="grantViewB">Grant view access</button>
+                  <button type="button" class="btn submit-btn danger-btn" id="revokeViewB">Revoke view access</button>
                 </div>
               </div>
             </form>
@@ -262,8 +312,8 @@
               <br>
               <div class="mb-3 row">
                 <div class="col-sm-12">
-                  <button type="submit" class="btn submit-btn" id="grantAddB">Grant</button> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-                  <button type="submit" class="btn submit-btn" id="revokeAddB">Revoke</button>
+                  <button type="button" class="btn submit-btn" id="grantAddB">Grant add access</button>
+                  <button type="button" class="btn submit-btn danger-btn" id="revokeAddB">Revoke add access</button>
                 </div>
               </div>
             </form>
@@ -271,10 +321,8 @@
         </div>
       </div>
     </div>
-    <br />
-    <hr>
-    <br>
-    <div class="row">
+    </div></section>
+    <section class="dashboard-section" id="recordsSection"><div class="eyebrow mb-1">Health information</div><h2 class="h4 mb-1">Medical records</h2><p class="section-intro mb-3">Retrieve an individual record or search the list returned by the backend.</p><div class="row g-3">
       <div class="col-md-6" id="viewEMRDiv">
         <div class="card text-center custom-card shadow h-100">
           <div class="card-body">
@@ -311,20 +359,19 @@
             <h5 class="card-title register-text">Your EMR</h5>
             <hr />
             <div id="viewEMRDiv">
-              <textarea style="display: none" name="emrcontent" placeholder="After you click submit the button EMR will appear here" id="emrdata"></textarea>
+              <div id="recordDetailStatus" class="inline-status is-empty">No record loaded yet. Use “View” to retrieve one.</div>
+              <textarea style="display: none" name="emrcontent" placeholder="Your retrieved medical record will appear here." id="emrdata" aria-label="Retrieved medical record" readonly></textarea>
             </div>
           </div>
         </div>
       </div>
     </div>
-    <br>
-    <hr>
-    <br>
-    <div class="row">
+    </div></section>
+    <section class="dashboard-section" id="permissionsSection"><div class="eyebrow mb-1">Sharing overview</div><h2 class="h4 mb-3">Access permissions</h2><div class="row g-3">
       <div class="col-md-6">
         <div class="card text-center custom-card shadow h-100">
           <div class="card-body">
-            <h5 class="card-title register-text">View Your EMR List</h5>
+            <h5 class="card-title register-text">Medical records</h5>
             <hr />
             <div id="viewEMRListDiv">
               <form id="viewEMRList" method="GET">
@@ -343,10 +390,13 @@
       <div class="col-md-6" id="viewEMRDiv">
         <div class="card text-center custom-card shadow h-100">
           <div class="card-body">
-            <h5 class="card-title register-text">Your EMR List</h5>
+            <h5 class="card-title register-text">Your medical records</h5>
             <hr />
             <div id="viewEMRListDiv">
-              <table id="viewAllEMRList">
+              <label for="recordSearch" class="form-label d-block text-start">Search loaded records</label>
+              <input id="recordSearch" class="form-control mb-3" type="search" placeholder="Search provider, type, date or content">
+              <div id="recordListStatus" class="inline-status is-empty" role="status" aria-live="polite">Load your record list to begin.</div>
+              <div class="table-responsive"><table id="viewAllEMRList">
                 <thead>
                   <tr>
                     <th>Adder Email</th>
@@ -357,7 +407,7 @@
                   </tr>
                 </thead>
                 <tbody></tbody>
-              </table>
+              </table></div>
             </div>
           </div>
         </div>
@@ -366,7 +416,7 @@
     <br>
     <hr>
     <br>
-    <div class="row">
+    <div class="row g-3">
       <div class="col-md-6">
         <div class="card text-center custom-card shadow h-100">
           <div class="card-body">
@@ -410,7 +460,7 @@
     <br>
     <hr>
     <br>
-    <div class="row">
+    <div class="row g-3">
       <div class="col-md-6">
         <div class="card text-center custom-card shadow h-100">
           <div class="card-body">
@@ -457,10 +507,32 @@
         </div>
       </div>
     </div>
-    <br>
-    <hr>
-    <br>
+    </div></section>
+    <p class="footer-note">DeMR patient workspace · Share medical records only with trusted care providers.</p>
+  </main>
+  <div class="modal fade" id="accessConfirmModal" tabindex="-1" aria-labelledby="accessConfirmTitle" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered"><div class="modal-content border-0 rounded-4">
+      <div class="modal-header"><h5 class="modal-title" id="accessConfirmTitle">Confirm access change</h5><button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cancel"></button></div>
+      <div class="modal-body"><p id="accessConfirmMessage" class="mb-2"></p><div class="small text-muted">Verify the emails and record ID. The change is sent only after confirmation.</div></div>
+      <div class="modal-footer"><button type="button" class="btn btn-light border" data-bs-dismiss="modal">Cancel</button><button type="button" class="btn submit-btn" id="confirmAccessChange">Confirm change</button></div>
+    </div></div>
   </div>
+  <script>
+    (function(){
+      var pending=null;
+      function status(id,message,kind){var e=document.getElementById(id);if(!e)return;e.className='inline-status is-'+kind;e.textContent=message;}
+      function busy(form,on){if(!form)return;form.querySelectorAll('button[type="submit"]').forEach(function(b){if(on){b.dataset.label=b.textContent;b.disabled=true;b.textContent='Loading…';}else{b.disabled=false;if(b.dataset.label)b.textContent=b.dataset.label;}});}
+      document.querySelectorAll('form').forEach(function(f){f.addEventListener('submit',function(){busy(f,true);window.setTimeout(function(){busy(f,false);},12000);});});
+      var search=document.getElementById('recordSearch');
+      if(search)search.addEventListener('input',function(){var q=this.value.trim().toLowerCase(),rows=document.querySelectorAll('#viewAllEMRList tbody tr'),shown=0;rows.forEach(function(r){var ok=r.textContent.toLowerCase().includes(q);r.hidden=!ok;if(ok)shown++;});if(rows.length)status('recordListStatus',shown+' matching row(s).',shown?'success':'empty');});
+      var el=document.getElementById('accessConfirmModal'),modal=window.bootstrap?new bootstrap.Modal(el):null;
+      function send(){if(!pending)return;var p=pending;pending=null;if(modal)modal.hide();var handlers={grantViewB:'grantViewAccess',revokeViewB:'revokeViewAccess',grantAddB:'grantAddAccess',revokeAddB:'revokeAddAccess'};var fn=window[handlers[p.buttonId]];if(typeof fn==='function')fn({preventDefault:function(){}});}
+      function ask(buttonId,formId,label,danger){var b=document.getElementById(buttonId);if(!b)return;b.addEventListener('click',function(e){e.preventDefault();var form=document.getElementById(formId);if(!form||!form.reportValidity())return;var details=Array.from(form.querySelectorAll('input')).map(function(i){return i.value.trim();}).filter(Boolean).join(' · ');pending={buttonId:buttonId};document.getElementById('accessConfirmTitle').textContent=label;document.getElementById('accessConfirmMessage').textContent=label+'? Details: '+details;var cb=document.getElementById('confirmAccessChange');cb.textContent=label;cb.classList.toggle('danger-btn',!!danger);if(modal)modal.show();else if(window.swal)window.swal({title:label,text:details,icon:danger?'warning':'info',buttons:true}).then(function(ok){if(ok)send();});});}
+      ask('grantViewB','viewAccessF','Grant view access',false);ask('revokeViewB','viewAccessF','Revoke view access',true);ask('grantAddB','addAccessF','Grant add access',false);ask('revokeAddB','addAccessF','Revoke add access',true);
+      document.getElementById('confirmAccessChange').addEventListener('click',send);
+      if(window.jQuery){window.jQuery(document).ajaxStart(function(){document.getElementById('connectionSummary').textContent='Working…';status('patientGlobalStatus','Request in progress. Please wait…','loading');});window.jQuery(document).ajaxStop(function(){document.getElementById('connectionSummary').textContent='Ready';var e=document.getElementById('patientGlobalStatus');if(e.classList.contains('is-loading'))e.style.display='none';});window.jQuery(document).ajaxError(function(){document.getElementById('connectionSummary').textContent='Offline';status('patientGlobalStatus','Could not reach the API. Check that the backend is running and try again.','error');});window.jQuery(document).ajaxSuccess(function(){var e=document.getElementById('patientGlobalStatus');if(e.classList.contains('is-loading'))e.style.display='none';});}
+    })();
+  </script>
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta1/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>
