@@ -557,3 +557,12 @@ const addEMRLab = function (event) {
     },
   });
 };
+
+ 
+// Expose patient access actions so the UI can invoke them only after confirmation.
+window.demrAccessActions = {
+  grantViewAccess: grantViewAccess,
+  revokeViewAccess: revokeViewAccess,
+  grantAddAccess: grantAddAccess,
+  revokeAddAccess: revokeAddAccess
+};
