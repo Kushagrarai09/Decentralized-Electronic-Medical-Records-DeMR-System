@@ -446,9 +446,7 @@ class EMRContract extends Contract {
     const userAsBytes = await ctx.stub.getState(key2);
     
     if (userAsBytes.length === 0) {
-      console.info("Here is an error");
-      
-      throw new Error(`User with ID: ${email} doesn't exist`);
+      throw new Error(`User with ID: ${userEmail} doesn't exist`);
     }
 
     const emr = EMR.deserialize(JSON.parse(emrAsBytes.toString()));
