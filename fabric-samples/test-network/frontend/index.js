@@ -49,12 +49,14 @@ const grantViewAccess = function (event) {
         // $('#emrdata').display("inline");
         // $('#emrdata').css('display', 'inline');
         swal("Success", resData, "success");
+        if (typeof window.demrShowStatus === "function") window.demrShowStatus("Access change completed.", "success");
         $("#viewAccessF").trigger("reset");
       }
     },
     error: function (error) {
       swal("Oops", error.toString(), "error");
-      console.log(error);
+      if (typeof window.demrShowStatus === "function") window.demrShowStatus("The request failed. Check the API connection and try again.", "error");
+      console.error("API request failed:", error);
     },
   });
   // $.ajax({
@@ -96,12 +98,14 @@ const revokeViewAccess = function (event) {
         // $('#emrdata').display("inline");
         // $('#emrdata').css('display', 'inline');
         swal("Success", resData, "success");
+        if (typeof window.demrShowStatus === "function") window.demrShowStatus("Access change completed.", "success");
         $("#viewAccessF").trigger("reset");
       }
     },
     error: function (error) {
       swal("Oops", error.toString(), "error");
-      console.log(error);
+      if (typeof window.demrShowStatus === "function") window.demrShowStatus("The request failed. Check the API connection and try again.", "error");
+      console.error("API request failed:", error);
     },
   });
 };
@@ -129,12 +133,14 @@ const grantAddAccess = function (event) {
         // $('#emrdata').display("inline");
         // $('#emrdata').css('display', 'inline');
         swal("Success", resData, "success");
+        if (typeof window.demrShowStatus === "function") window.demrShowStatus("Access change completed.", "success");
         $("#addAccessF").trigger("reset");
       }
     },
     error: function (error) {
       swal("Oops", error.toString(), "error");
-      console.log(error);
+      if (typeof window.demrShowStatus === "function") window.demrShowStatus("The request failed. Check the API connection and try again.", "error");
+      console.error("API request failed:", error);
     },
   });
 };
@@ -163,18 +169,21 @@ const revokeAddAccess = function (event) {
         // $('#emrdata').display("inline");
         // $('#emrdata').css('display', 'inline');
         swal("Success", resData, "success");
+        if (typeof window.demrShowStatus === "function") window.demrShowStatus("Access change completed.", "success");
         $("#addAccessF").trigger("reset");
       }
     },
     error: function (error) {
       swal("Oops", error.toString(), "error");
-      console.log(error);
+      if (typeof window.demrShowStatus === "function") window.demrShowStatus("The request failed. Check the API connection and try again.", "error");
+      console.error("API request failed:", error);
     },
   });
 };
 
 const getEMR = function (event) {
   event.preventDefault();
+  if (typeof window.demrShowStatus === "function") window.demrShowStatus("Loading medical record…", "loading");
 
   const formData = $("#viewEMRFPatient").serializeArray();
   console.log(formData);
@@ -206,13 +215,14 @@ const getEMR = function (event) {
     error: function (error) {
       //alert(error);
       swal("Oops", error.toString(), "error");
-      console.log(error);
+      console.error("API request failed:", error);
     },
   });
 };
 
 const viewAllEMR = function (event) {
   event.preventDefault();
+  if (typeof window.demrShowStatus === "function") window.demrShowStatus("Loading medical records…", "loading");
   console.log(" viewAllEMR sending ...");
   const formData = $("#viewEMRList").serializeArray();
   console.log(formData);
@@ -226,11 +236,20 @@ const viewAllEMR = function (event) {
     }),
     contentType: "application/json",
     success: function (resData) {
-      resData = JSON.parse(resData);
-      if (resData.toString().indexOf("Error:") != -1) {
-        swal("Oops", resData, "error");
+      try {
+        resData = typeof resData === "string" ? JSON.parse(resData) : resData;
+      } catch (parseError) {
+        if (typeof window.demrShowStatus === "function") window.demrShowStatus("The server returned an unreadable record list.", "error");
+        swal("Oops", "The server returned an unreadable record list.", "error");
+        return;
+      }
+      if (!Array.isArray(resData) || (resData.length && String(resData).indexOf("Error:") !== -1)) {
+        const message = String(resData);
+        if (typeof window.demrShowStatus === "function") window.demrShowStatus(message || "The record list could not be loaded.", "error");
+        swal("Oops", message, "error");
       } else {
         createTable(resData, "viewALlEMR");
+        if (typeof window.demrShowStatus === "function") window.demrShowStatus(resData.length ? ("Loaded " + resData.length + " medical record(s).") : "No medical records were returned.", resData.length ? "success" : "empty");
       }
 
       // appendProduct(JSON.parse(data));
@@ -238,7 +257,7 @@ const viewAllEMR = function (event) {
     error: function (error) {
       //alert(error);
       swal("Oops", error.toString(), "error");
-      console.log(error);
+      console.error("API request failed:", error);
     },
   });
 };
@@ -277,7 +296,7 @@ const viewAddAccessList = function (event) {
     error: function (error) {
       //alert(error);
       swal("Oops", error.toString(), "error");
-      console.log(error);
+      console.error("API request failed:", error);
     },
   });
 };
@@ -318,12 +337,16 @@ const viewAllUserForEMR = function (event) {
     error: function (error) {
       //alert(error);
       swal("Oops", error.toString(), "error");
-      console.log(error);
+      console.error("API request failed:", error);
     },
   });
 };
 
 function createTable(data, type) {
+  if (!Array.isArray(data)) {
+    console.error("Expected table data to be an array.");
+    return;
+  }
   if (type == "viewALlEMR") {
     var tableBody = document.querySelector("#viewAllEMRList tbody");
   }
@@ -334,8 +357,18 @@ function createTable(data, type) {
     var tableBody = document.querySelector("#viewAllUserForEMR tbody");
   }
 
-  // Clear existing rows
+  if (!tableBody) return;
+  // Clear existing rows before rendering the latest API response.
   tableBody.innerHTML = "";
+  if (!data.length && type === "viewALlEMR") {
+    const emptyRow = document.createElement("tr");
+    const emptyCell = document.createElement("td");
+    emptyCell.colSpan = 5;
+    emptyCell.textContent = "No medical records found.";
+    emptyRow.appendChild(emptyCell);
+    tableBody.appendChild(emptyRow);
+    return;
+  }
   console.log(typeof data);
   // p01@gmail.com
   // [["d01@gmail.com","medical","This is 1","26/11/2023",1],["d01@gmail.com","medical","This is 2","26/11/2023",1],["d01@gmail.com","medical","This is 3","26/11/2023",1]]
@@ -403,7 +436,7 @@ const addUser = function (event) {
     },
     error: function (error) {
       swal("Oops", error.toString(), "error");
-      console.log(error);
+      console.error("API request failed:", error);
     },
   });
 };
@@ -444,7 +477,7 @@ const addEMRDoctor = function (event) {
     },
     error: function (error) {
       swal("Oops", error.toString(), "error");
-      console.log(error);
+      console.error("API request failed:", error);
     },
   });
 };
@@ -479,7 +512,7 @@ const getEMRDoctor = function (event) {
     },
     error: function (error) {
       swal("Oops", error.toString(), "error");
-      console.log(error);
+      console.error("API request failed:", error);
     },
   });
 };
@@ -520,7 +553,7 @@ const addEMRLab = function (event) {
     },
     error: function (error) {
       swal("Oops", error.toString(), "error");
-      console.log(error);
+      console.error("API request failed:", error);
     },
   });
 };
