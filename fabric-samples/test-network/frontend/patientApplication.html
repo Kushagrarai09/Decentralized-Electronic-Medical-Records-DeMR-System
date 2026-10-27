@@ -358,17 +358,16 @@
       var search=document.getElementById('recordSearch');
       if(search)search.addEventListener('input',function(){var q=this.value.trim().toLowerCase(),rows=document.querySelectorAll('#viewAllEMRList tbody tr'),shown=0;rows.forEach(function(r){var ok=r.textContent.toLowerCase().includes(q);r.hidden=!ok;if(ok)shown++;});if(rows.length)status('recordListStatus',shown+' matching row(s).',shown?'success':'empty');});
       var el=document.getElementById('accessConfirmModal'),modal=window.bootstrap?new bootstrap.Modal(el):null;
-      var bypassConfirmation = false;
       function send(){
         if(!pending)return;
         var action=pending;
         pending=null;
         if(modal)modal.hide();
-        // Reuse the existing jQuery-bound API handler only after explicit confirmation.
-        bypassConfirmation=true;
-        window.jQuery('#'+action.buttonId).trigger('click');
+        var handlers={grantViewB:'grantViewAccess',revokeViewB:'revokeViewAccess',grantAddB:'grantAddAccess',revokeAddB:'revokeAddAccess'};
+        var handler=window.demrAccessActions && window.demrAccessActions[handlers[action.buttonId]];
+        if(typeof handler==='function')handler({preventDefault:function(){}});
       }
-      function ask(buttonId,formId,label,danger){var b=document.getElementById(buttonId);if(!b)return;b.addEventListener('click',function(e){if(bypassConfirmation){bypassConfirmation=false;return;}e.preventDefault();var form=document.getElementById(formId);if(!form||!form.reportValidity())return;var details=Array.from(form.querySelectorAll('input')).map(function(i){return i.value.trim();}).filter(Boolean).join(' · ');pending={buttonId:buttonId};document.getElementById('accessConfirmTitle').textContent=label;document.getElementById('accessConfirmMessage').textContent=label+'? Details: '+details;var cb=document.getElementById('confirmAccessChange');cb.textContent=label;cb.classList.toggle('danger-btn',!!danger);if(modal)modal.show();else if(window.swal)window.swal({title:label,text:details,icon:danger?'warning':'info',buttons:true}).then(function(ok){if(ok)send();});});}
+      function ask(buttonId,formId,label,danger){var b=document.getElementById(buttonId);if(!b)return;b.addEventListener('click',function(e){e.preventDefault();e.stopImmediatePropagation();var form=document.getElementById(formId);if(!form||!form.reportValidity())return;var details=Array.from(form.querySelectorAll('input')).map(function(i){return i.value.trim();}).filter(Boolean).join(' · ');pending={buttonId:buttonId};document.getElementById('accessConfirmTitle').textContent=label;document.getElementById('accessConfirmMessage').textContent=label+'? Details: '+details;var cb=document.getElementById('confirmAccessChange');cb.textContent=label;cb.classList.toggle('danger-btn',!!danger);if(modal)modal.show();else if(window.swal)window.swal({title:label,text:details,icon:danger?'warning':'info',buttons:true}).then(function(ok){if(ok)send();});});}
       ask('grantViewB','viewAccessF','Grant view access',false);ask('revokeViewB','viewAccessF','Revoke view access',true);ask('grantAddB','addAccessF','Grant add access',false);ask('revokeAddB','addAccessF','Revoke add access',true);
       document.getElementById('confirmAccessChange').addEventListener('click',send);
       if(window.jQuery){window.jQuery(document).ajaxStart(function(){document.getElementById('connectionSummary').textContent='Working…';status('patientGlobalStatus','Request in progress. Please wait…','loading');});window.jQuery(document).ajaxStop(function(){document.getElementById('connectionSummary').textContent='Ready';var e=document.getElementById('patientGlobalStatus');if(e.classList.contains('is-loading'))e.style.display='none';});window.jQuery(document).ajaxError(function(){document.getElementById('connectionSummary').textContent='Offline';status('patientGlobalStatus','Could not reach the API. Check that the backend is running and try again.','error');});window.jQuery(document).ajaxSuccess(function(){var e=document.getElementById('patientGlobalStatus');if(e.classList.contains('is-loading'))e.style.display='none';});}
