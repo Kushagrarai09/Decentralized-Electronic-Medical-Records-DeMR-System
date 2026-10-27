@@ -242,273 +242,105 @@
   </div>
 
   <!-- Info Cards Section -->
-  <div class="container dashboard-shell mt-4">
+  <main class="container dashboard-shell mt-4" id="patientDashboard">
   <div class="row g-3 mb-4" aria-label="Patient workspace overview">
     <div class="col-6 col-lg-3"><div class="summary-card"><div class="summary-label">Workspace</div><div class="summary-value">Patient</div><div class="small text-muted">Personal record view</div></div></div>
     <div class="col-6 col-lg-3"><div class="summary-card"><div class="summary-label">Health information</div><div class="summary-value">EMR</div><div class="small text-muted">Retrieve records by ID or list</div></div></div>
     <div class="col-6 col-lg-3"><div class="summary-card"><div class="summary-label">Sharing</div><div class="summary-value">Controls</div><div class="small text-muted">Manage view and add access</div></div></div>
     <div class="col-6 col-lg-3"><div class="summary-card"><div class="summary-label">API status</div><div class="summary-value" id="connectionSummary">Ready</div><div class="small text-muted">Updates during requests</div></div></div>
   </div>
-  <nav class="d-flex flex-wrap gap-2 mb-4" aria-label="Patient sections"><a class="btn btn-light border" href="#recordsSection">Medical records</a><a class="btn btn-light border" href="#accessSection">Access management</a><a class="btn btn-light border" href="#permissionsSection">Permissions</a></nav>
+  <nav class="d-flex flex-wrap gap-2 mb-4" aria-label="Patient sections">
+    <a class="btn btn-light border" href="#recordsSection">Medical records</a>
+    <a class="btn btn-light border" href="#accessSection">Access management</a>
+    <a class="btn btn-light border" href="#permissionsSection">Permissions</a>
+  </nav>
   <div id="patientGlobalStatus" class="inline-status" role="status" aria-live="polite"></div>
-</div>
-  <main class="container" id="accessManagementDiv">
-    <section class="dashboard-section" id="accessSection"><div class="eyebrow mb-1">Privacy controls</div><h2 class="h4 mb-1">Manage access</h2><p class="section-intro mb-3">Confirm the recipient and record before changing permissions.</p><div class="row g-3">
-      <div class="col-md-6" id="viewAccessDiv">
-        <div class="card text-center custom-card shadow h-100">
-          <div class="card-body">
-            <h5 class="card-title register-text">Manage Your EMR View Access</h5>
-            <hr />
-            <form method="POST" id="viewAccessF">
-              <div class="mb-3 row">
-                <label for="userEmail" class="col-sm-4 col-form-label form-label">User Email-id</label>
-                <div class="col-sm-8">
-                  <input type="email" placeholder="Enter user email" name="email" id="userEmail" class="form-control" required />
-                </div>
-              </div>
-              <div class="mb-3 row">
-                <label for="viewerEmail" class="col-sm-4 col-form-label form-label">Viewer Email-id</label>
-                <div class="col-sm-8">
-                  <input type="email" placeholder="Enter viewer email" name="email" id="viewerEmail" class="form-control" required />
-                </div>
-              </div>
-              <div class="mb-3 row">
-                <label for="emrID" class="col-sm-4 col-form-label form-label">EMR ID</label>
-                <div class="col-sm-8">
-                  <input type="text" placeholder="Enter EMR ID" name="EMR ID" id="emrID" class="form-control" required />
-                </div>
-              </div>
-              <br />
-              <div class="mb-3 row">
-                <div class="col-sm-12">
-                  <button type="button" class="btn submit-btn" id="grantViewB">Grant view access</button>
-                  <button type="button" class="btn submit-btn danger-btn" id="revokeViewB">Revoke view access</button>
-                </div>
-              </div>
-            </form>
-          </div>
-        </div>
-      </div>
-      <div class="col-md-6" id="addAccessDiv">
-        <div class="card text-center custom-card shadow h-100">
-          <div class="card-body">
-            <h5 class="card-title register-text">Manage Your EMR Add Access</h5>
-            <hr />
-            <form method="POST" id="addAccessF">
-              <br>
-              <div class="mb-3 row">
-                <label for="userEmail" class="col-sm-4 col-form-label form-label">User Email-id</label>
-                <div class="col-sm-8">
-                  <input type="email" placeholder="Enter user email" name="email" id="userEmail" class="form-control" required />
-                </div>
-              </div>
-              <br>
-              <div class="mb-3 row">
-                <label for="adderEmail" class="col-sm-4 col-form-label form-label">Adder Email-id</label>
-                <div class="col-sm-8">
-                  <input type="email" placeholder="Enter adder email" name="email" id="adderEmail" class="form-control" required />
-                </div>
-              </div>
-              <br>
-              <div class="mb-3 row">
-                <div class="col-sm-12">
-                  <button type="button" class="btn submit-btn" id="grantAddB">Grant add access</button>
-                  <button type="button" class="btn submit-btn danger-btn" id="revokeAddB">Revoke add access</button>
-                </div>
-              </div>
-            </form>
-          </div>
-        </div>
-      </div>
-    </div>
-    </div></section>
-    <section class="dashboard-section" id="recordsSection"><div class="eyebrow mb-1">Health information</div><h2 class="h4 mb-1">Medical records</h2><p class="section-intro mb-3">Retrieve an individual record or search the list returned by the backend.</p><div class="row g-3">
-      <div class="col-md-6" id="viewEMRDiv">
-        <div class="card text-center custom-card shadow h-100">
-          <div class="card-body">
-            <h5 class="card-title register-text">View Your EMR</h5>
-            <hr />
-            <form method="GET" id="viewEMRFPatient">
-              <br>
-              <div class="mb-3 row">
-                <label for="userEmail" class="col-sm-4 col-form-label form-label">User Email-id</label>
-                <div class="col-sm-8">
-                  <input type="email" placeholder="Enter user email" name="email" id="userEmail" class="form-control" required />
-                </div>
-              </div>
-              <br>
-              <div class="mb-3 row">
-                <label for="emrID" class="col-sm-4 col-form-label form-label">EMR ID</label>
-                <div class="col-sm-8">
-                  <input type="text" placeholder="EMR ID" name="EMR ID" id="emrID" class="form-control" />
-                </div>
-              </div>
-              <br />
-              <div class="mb-3 row">
-                <div class="col-sm-12">
-                  <button type="submit" class="btn submit-btn" style="width: 80%;">View</button>
-                </div>
-              </div>
-            </form>
-          </div>
-        </div>
-      </div>
-      <div class="col-md-6" id="viewEMRDiv">
-        <div class="card text-center custom-card shadow h-100">
-          <div class="card-body">
-            <h5 class="card-title register-text">Your EMR</h5>
-            <hr />
-            <div id="viewEMRDiv">
-              <div id="recordDetailStatus" class="inline-status is-empty">No record loaded yet. Use “View” to retrieve one.</div>
-              <textarea style="display: none" name="emrcontent" placeholder="Your retrieved medical record will appear here." id="emrdata" aria-label="Retrieved medical record" readonly></textarea>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-    </div></section>
+
+  <section class="dashboard-section" id="accessSection">
+    <div class="eyebrow mb-1">Privacy controls</div>
+    <h2 class="h4 mb-1">Manage access</h2>
+    <p class="section-intro mb-3">Confirm the recipient and record before changing permissions.</p>
     <div class="row g-3">
-      <div class="col-md-6">
-        <div class="card text-center custom-card shadow h-100">
-          <div class="card-body">
-            <h5 class="card-title register-text">Medical records</h5>
-            <hr />
-            <div id="viewEMRListDiv">
-              <form id="viewEMRList" method="GET">
-                <div class="mb-3 row">
-                  <label for="userEmail" class="col-sm-4 col-form-label form-label">User Email-id</label>
-                  <div class="col-sm-8">
-                    <input type="email" placeholder="Enter user email" name="email" id="userEmail" class="form-control" required />
-                  </div>
-                </div>
-                <button type="submit" class="btn submit-btn" style="width: 80%;">Get all EMR</button>
-              </form>
-            </div>
-          </div>
-        </div>
-      </div>
-      <div class="col-md-6" id="viewEMRDiv">
-        <div class="card text-center custom-card shadow h-100">
-          <div class="card-body">
-            <h5 class="card-title register-text">Your medical records</h5>
-            <hr />
-            <div id="viewEMRListDiv">
-              <label for="recordSearch" class="form-label d-block text-start">Search loaded records</label>
-              <input id="recordSearch" class="form-control mb-3" type="search" placeholder="Search provider, type, date or content">
-              <div id="recordListStatus" class="inline-status is-empty" role="status" aria-live="polite">Load your record list to begin.</div>
-              <div class="table-responsive"><table id="viewAllEMRList">
-                <thead>
-                  <tr>
-                    <th>Adder Email</th>
-                    <th>Type</th>
-                    <th>EMR Content</th>
-                    <th>Creation Date</th>
-                    <th>No. of users with access</th>
-                  </tr>
-                </thead>
-                <tbody></tbody>
-              </table></div>
-            </div>
-          </div>
-        </div>
-      </div>
+      <div class="col-md-6" id="viewAccessDiv"><div class="card custom-card h-100"><div class="card-body">
+        <h3 class="card-title register-text">Manage view access</h3><hr>
+        <form method="POST" id="viewAccessF">
+          <div class="mb-3"><label for="viewOwnerEmail" class="form-label">Patient email</label><input type="email" placeholder="Enter patient email" name="email" id="viewOwnerEmail" class="form-control" required></div>
+          <div class="mb-3"><label for="viewerEmail" class="form-label">Viewer email</label><input type="email" placeholder="Enter viewer email" name="email" id="viewerEmail" class="form-control" required></div>
+          <div class="mb-3"><label for="viewAccessEmrId" class="form-label">EMR ID</label><input type="text" placeholder="Enter EMR ID" name="EMR ID" id="viewAccessEmrId" class="form-control" required></div>
+          <div class="access-actions"><button type="button" class="btn submit-btn" id="grantViewB">Grant view access</button><button type="button" class="btn submit-btn danger-btn" id="revokeViewB">Revoke view access</button></div>
+        </form>
+      </div></div></div>
+      <div class="col-md-6" id="addAccessDiv"><div class="card custom-card h-100"><div class="card-body">
+        <h3 class="card-title register-text">Manage add access</h3><hr>
+        <form method="POST" id="addAccessF">
+          <div class="mb-3"><label for="addOwnerEmail" class="form-label">Patient email</label><input type="email" placeholder="Enter patient email" name="email" id="addOwnerEmail" class="form-control" required></div>
+          <div class="mb-3"><label for="adderEmail" class="form-label">Recipient email</label><input type="email" placeholder="Enter recipient email" name="email" id="adderEmail" class="form-control" required></div>
+          <div class="access-actions"><button type="button" class="btn submit-btn" id="grantAddB">Grant add access</button><button type="button" class="btn submit-btn danger-btn" id="revokeAddB">Revoke add access</button></div>
+        </form>
+      </div></div></div>
     </div>
-    </section>
-    <section class="dashboard-section" id="permissionsSection"><div class="eyebrow mb-1">Sharing overview</div><h2 class="h4 mb-3">Access permissions</h2>
+  </section>
+
+  <section class="dashboard-section" id="recordsSection">
+    <div class="eyebrow mb-1">Health information</div>
+    <h2 class="h4 mb-1">Medical records</h2>
+    <p class="section-intro mb-3">Retrieve an individual record or search the list returned by the backend.</p>
     <div class="row g-3">
-      <div class="col-md-6">
-        <div class="card text-center custom-card shadow h-100">
-          <div class="card-body">
-            <h5 class="card-title register-text">View All Users with Add access</h5>
-            <hr />
-            <div id="viewAddAccessListDiv">
-              <form id="viewAddAccessList1" method="GET">
-                <div class="mb-3 row">
-                  <label for="userEmail" class="col-sm-4 col-form-label form-label">User Email-id</label>
-                  <div class="col-sm-8">
-                    <input type="email" placeholder="Enter user email" name="email" id="userEmail" class="form-control" required />
-                  </div>
-                </div>
-                <button type="submit" class="btn submit-btn" style="width: 80%;">Get Access user list</button>
-              </form>
-            </div>
-          </div>
-        </div>
-      </div>
-      <div class="col-md-6" id="viewAddAccessListDiv">
-        <div class="card text-center custom-card shadow h-100">
-          <div class="card-body">
-            <h5 class="card-title register-text">Your EMR List</h5>
-            <hr />
-            <div id="viewAddAccessListDiv">
-              <table id="viewAddAccessList">
-                <thead>
-                  <tr>
-                    <th>Name</th>
-                    <th>Email</th>
-                    <th>Type</th>
-                  </tr>
-                </thead>
-                <tbody></tbody>
-              </table>
-            </div>
-          </div>
-        </div>
-      </div>
+      <div class="col-md-6"><div class="card custom-card h-100"><div class="card-body">
+        <h3 class="card-title register-text">View a medical record</h3><hr>
+        <form method="GET" id="viewEMRFPatient">
+          <div class="mb-3"><label for="recordOwnerEmail" class="form-label">Patient email</label><input type="email" placeholder="Enter patient email" name="email" id="recordOwnerEmail" class="form-control" required></div>
+          <div class="mb-3"><label for="recordEmrId" class="form-label">EMR ID</label><input type="text" placeholder="Enter EMR ID" name="EMR ID" id="recordEmrId" class="form-control"></div>
+          <button type="submit" class="btn submit-btn">View record</button>
+        </form>
+      </div></div></div>
+      <div class="col-md-6"><div class="card custom-card h-100"><div class="card-body">
+        <h3 class="card-title register-text">Record details</h3><hr>
+        <div id="recordDetailStatus" class="inline-status is-empty">No record loaded yet. Use “View record” to retrieve one.</div>
+        <textarea style="display:none" name="emrcontent" placeholder="Your retrieved medical record will appear here." id="emrdata" aria-label="Retrieved medical record" readonly></textarea>
+      </div></div></div>
+      <div class="col-12"><div class="card custom-card"><div class="card-body">
+        <h3 class="card-title register-text">Your medical records</h3><hr>
+        <form id="viewEMRList" method="GET" class="row g-2 align-items-end mb-3">
+          <div class="col-md-8"><label for="recordListOwnerEmail" class="form-label">Patient email</label><input type="email" placeholder="Enter patient email" name="email" id="recordListOwnerEmail" class="form-control" required></div>
+          <div class="col-md-4"><button type="submit" class="btn submit-btn w-100">Load records</button></div>
+        </form>
+        <label for="recordSearch" class="form-label">Search loaded records</label>
+        <input id="recordSearch" class="form-control mb-3" type="search" placeholder="Search provider, type, date or content">
+        <div id="recordListStatus" class="inline-status is-empty" role="status" aria-live="polite">Load your record list to begin.</div>
+        <div class="table-responsive"><table id="viewAllEMRList"><thead><tr><th>Adder email</th><th>Type</th><th>EMR content</th><th>Creation date</th><th>Users with access</th></tr></thead><tbody></tbody></table></div>
+      </div></div></div>
     </div>
-    <br>
-    <hr>
-    <br>
+  </section>
+
+  <section class="dashboard-section" id="permissionsSection">
+    <div class="eyebrow mb-1">Sharing overview</div>
+    <h2 class="h4 mb-1">Access permissions</h2>
+    <p class="section-intro mb-3">Review who can add information or view a specific record.</p>
     <div class="row g-3">
-      <div class="col-md-6">
-        <div class="card text-center custom-card shadow h-100">
-          <div class="card-body">
-            <h5 class="card-title register-text">View All Users who can access the EMR</h5>
-            <hr />
-            <div id="viewUserForEMRDiv">
-              <form id="viewUserForEMR" method="GET">
-                <div class="mb-3 row">
-                  <label for="userEmail" class="col-sm-4 col-form-label form-label">User Email-id</label>
-                  <div class="col-sm-8">
-                    <input type="email" placeholder="Enter user email" name="email" id="userEmail" class="form-control" required />
-                  </div>
-                </div>
-                <div class="mb-3 row">
-                  <label for="emrID" class="col-sm-4 col-form-label form-label">EMR ID</label>
-                  <div class="col-sm-8">
-                    <input type="text" placeholder="Enter EMR ID" name="EMR ID" id="emrID" class="form-control" required />
-                  </div>
-                </div>
-                <button type="submit" class="btn submit-btn" style="width: 80%;">Get user for EMR</button>
-              </form>
-            </div>
-          </div>
-        </div>
-      </div>
-      <div class="col-md-6" id="viewUserForEMRDiv">
-        <div class="card text-center custom-card shadow h-100">
-          <div class="card-body">
-            <h5 class="card-title register-text">Your EMR List</h5>
-            <hr />
-            <div id="viewUserForEMRDiv">
-              <table id="viewAllUserForEMR">
-                <thead>
-                  <tr>
-                    <th>Name</th>
-                    <th>Email</th>
-                    <th>Type</th>
-                  </tr>
-                </thead>
-                <tbody></tbody>
-              </table>
-            </div>
-          </div>
-        </div>
-      </div>
+      <div class="col-md-6"><div class="card custom-card h-100"><div class="card-body">
+        <h3 class="card-title register-text">Users with add access</h3><hr>
+        <form id="viewAddAccessList1" method="GET">
+          <div class="mb-3"><label for="addAccessOwnerEmail" class="form-label">Patient email</label><input type="email" placeholder="Enter patient email" name="email" id="addAccessOwnerEmail" class="form-control" required></div>
+          <button type="submit" class="btn submit-btn">Load users</button>
+        </form>
+        <div id="addPermissionsStatus" class="inline-status is-empty">Load the list to view add permissions.</div>
+        <div class="table-responsive"><table id="viewAddAccessList"><thead><tr><th>Name</th><th>Email</th><th>Type</th></tr></thead><tbody></tbody></table></div>
+      </div></div></div>
+      <div class="col-md-6"><div class="card custom-card h-100"><div class="card-body">
+        <h3 class="card-title register-text">Users with record access</h3><hr>
+        <form id="viewUserForEMR" method="GET">
+          <div class="mb-3"><label for="recordAccessOwnerEmail" class="form-label">Patient email</label><input type="email" placeholder="Enter patient email" name="email" id="recordAccessOwnerEmail" class="form-control" required></div>
+          <div class="mb-3"><label for="recordAccessEmrId" class="form-label">EMR ID</label><input type="text" placeholder="Enter EMR ID" name="EMR ID" id="recordAccessEmrId" class="form-control" required></div>
+          <button type="submit" class="btn submit-btn">Load access list</button>
+        </form>
+        <div id="viewPermissionsStatus" class="inline-status is-empty">Enter an EMR ID to view its access list.</div>
+        <div class="table-responsive"><table id="viewAllUserForEMR"><thead><tr><th>Name</th><th>Email</th><th>Type</th></tr></thead><tbody></tbody></table></div>
+      </div></div></div>
     </div>
-    </div></section>
-    <p class="footer-note">DeMR patient workspace · Share medical records only with trusted care providers.</p>
-  </main>
+  </section>
+  <p class="footer-note">DeMR patient workspace · Share medical records only with trusted care providers.</p>
+</main>
   <div class="modal fade" id="accessConfirmModal" tabindex="-1" aria-labelledby="accessConfirmTitle" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered"><div class="modal-content border-0 rounded-4">
       <div class="modal-header"><h5 class="modal-title" id="accessConfirmTitle">Confirm access change</h5><button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cancel"></button></div>
@@ -519,15 +351,24 @@
   <script>
     (function(){
       var pending=null;
-      function status(id,message,kind){var e=document.getElementById(id);if(!e)return;e.className='inline-status is-'+kind;e.textContent=message;}
+      function status(id,message,kind){var e=document.getElementById(id);if(!e)return;e.className='inline-status is-'+kind;e.textContent=message;e.style.display='block';}
       window.demrShowStatus=function(message,kind){status('patientGlobalStatus',message,kind);};
       function busy(form,on){if(!form)return;form.querySelectorAll('button[type="submit"]').forEach(function(b){if(on){b.dataset.label=b.textContent;b.disabled=true;b.textContent='Loading…';}else{b.disabled=false;if(b.dataset.label)b.textContent=b.dataset.label;}});}
       document.querySelectorAll('form').forEach(function(f){f.addEventListener('submit',function(){busy(f,true);window.setTimeout(function(){busy(f,false);},12000);});});
       var search=document.getElementById('recordSearch');
       if(search)search.addEventListener('input',function(){var q=this.value.trim().toLowerCase(),rows=document.querySelectorAll('#viewAllEMRList tbody tr'),shown=0;rows.forEach(function(r){var ok=r.textContent.toLowerCase().includes(q);r.hidden=!ok;if(ok)shown++;});if(rows.length)status('recordListStatus',shown+' matching row(s).',shown?'success':'empty');});
       var el=document.getElementById('accessConfirmModal'),modal=window.bootstrap?new bootstrap.Modal(el):null;
-      function send(){if(!pending)return;var p=pending;pending=null;if(modal)modal.hide();var handlers={grantViewB:'grantViewAccess',revokeViewB:'revokeViewAccess',grantAddB:'grantAddAccess',revokeAddB:'revokeAddAccess'};var fn=window[handlers[p.buttonId]];if(typeof fn==='function')fn({preventDefault:function(){}});}
-      function ask(buttonId,formId,label,danger){var b=document.getElementById(buttonId);if(!b)return;b.addEventListener('click',function(e){e.preventDefault();var form=document.getElementById(formId);if(!form||!form.reportValidity())return;var details=Array.from(form.querySelectorAll('input')).map(function(i){return i.value.trim();}).filter(Boolean).join(' · ');pending={buttonId:buttonId};document.getElementById('accessConfirmTitle').textContent=label;document.getElementById('accessConfirmMessage').textContent=label+'? Details: '+details;var cb=document.getElementById('confirmAccessChange');cb.textContent=label;cb.classList.toggle('danger-btn',!!danger);if(modal)modal.show();else if(window.swal)window.swal({title:label,text:details,icon:danger?'warning':'info',buttons:true}).then(function(ok){if(ok)send();});});}
+      var bypassConfirmation = false;
+      function send(){
+        if(!pending)return;
+        var action=pending;
+        pending=null;
+        if(modal)modal.hide();
+        // Reuse the existing jQuery-bound API handler only after explicit confirmation.
+        bypassConfirmation=true;
+        window.jQuery('#'+action.buttonId).trigger('click');
+      }
+      function ask(buttonId,formId,label,danger){var b=document.getElementById(buttonId);if(!b)return;b.addEventListener('click',function(e){if(bypassConfirmation){bypassConfirmation=false;return;}e.preventDefault();var form=document.getElementById(formId);if(!form||!form.reportValidity())return;var details=Array.from(form.querySelectorAll('input')).map(function(i){return i.value.trim();}).filter(Boolean).join(' · ');pending={buttonId:buttonId};document.getElementById('accessConfirmTitle').textContent=label;document.getElementById('accessConfirmMessage').textContent=label+'? Details: '+details;var cb=document.getElementById('confirmAccessChange');cb.textContent=label;cb.classList.toggle('danger-btn',!!danger);if(modal)modal.show();else if(window.swal)window.swal({title:label,text:details,icon:danger?'warning':'info',buttons:true}).then(function(ok){if(ok)send();});});}
       ask('grantViewB','viewAccessF','Grant view access',false);ask('revokeViewB','viewAccessF','Revoke view access',true);ask('grantAddB','addAccessF','Grant add access',false);ask('revokeAddB','addAccessF','Revoke add access',true);
       document.getElementById('confirmAccessChange').addEventListener('click',send);
       if(window.jQuery){window.jQuery(document).ajaxStart(function(){document.getElementById('connectionSummary').textContent='Working…';status('patientGlobalStatus','Request in progress. Please wait…','loading');});window.jQuery(document).ajaxStop(function(){document.getElementById('connectionSummary').textContent='Ready';var e=document.getElementById('patientGlobalStatus');if(e.classList.contains('is-loading'))e.style.display='none';});window.jQuery(document).ajaxError(function(){document.getElementById('connectionSummary').textContent='Offline';status('patientGlobalStatus','Could not reach the API. Check that the backend is running and try again.','error');});window.jQuery(document).ajaxSuccess(function(){var e=document.getElementById('patientGlobalStatus');if(e.classList.contains('is-loading'))e.style.display='none';});}
