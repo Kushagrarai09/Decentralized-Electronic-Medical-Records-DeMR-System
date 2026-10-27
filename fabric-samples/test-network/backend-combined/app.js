@@ -7,15 +7,11 @@ const PORT_DOCTOR = 3002;
 const PORT_PATIENT = 3000;
 const ADMIN_PORT = 3001;
 
-const admin = require("./enrollAdmin.js");
-const user = require("./registerUser.js");
 const query = require("./query.js");
 
 async function init() {
   app.use(cors());
   app.use(express.json());
-
-  await connect();
 
   app.get("/", (req, res) => res.send("Hello World!"));
 
@@ -58,16 +54,6 @@ async function init() {
   app.listen(ADMIN_PORT, () =>
     console.log(`Admin App listening on port ${ADMIN_PORT}`)
   );
-}
-
-async function connect() {
-  const userTypes = ["admin1", "doctor", "patient"];
-  await admin.enrollAdmin("admin");
-
-  // Comment out the following line to prevent registering users after first run
-  for (const userType of userTypes) {
-    await user.registerUser(userType);
-  }
 }
 
 // Doctor Routes
