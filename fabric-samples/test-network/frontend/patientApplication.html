@@ -3,464 +3,255 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta1/dist/css/bootstrap.min.css" rel="stylesheet" />
-  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+  <meta name="theme-color" content="#0f766e" />
+  <title>Patient Portal | DeMR</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Manrope:wght@500;600;700;800&display=swap" rel="stylesheet" />
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
   <script type="text/javascript" src="index.js"></script>
   <script src="sweetalert.min.js"></script>
   <style>
-    body {
-      font-family: 'Roboto', sans-serif;
-      background-color: #f4f7fa;
-      color: #333;
-      margin: 0;
-      scroll-behavior: smooth;
+    :root {
+      --ink: #17313b;
+      --muted: #6b8188;
+      --teal: #0f766e;
+      --teal-dark: #115e59;
+      --teal-soft: #e7f6f3;
+      --line: #e1eceb;
+      --canvas: #f5f9f8;
+      --white: #fff;
+      --shadow: 0 12px 32px rgba(20, 64, 66, .055);
     }
-    .navbar {
-      background-color: #2c3e50;
-      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body { margin: 0; background: var(--canvas); color: var(--ink); font-family: "DM Sans", sans-serif; }
+    .navbar { background: #fff; border-bottom: 1px solid var(--line); padding: 14px 0; }
+    .navbar-brand { display: inline-flex; align-items: center; gap: 10px; color: var(--ink) !important; font-family: Manrope, sans-serif; font-weight: 800; letter-spacing: -.6px; font-size: 1.35rem; }
+    .brand-mark { width: 36px; height: 36px; display: inline-grid; place-items: center; border-radius: 12px; color: white; background: var(--teal); font-size: 1.1rem; }
+    .navbar .nav-link { color: #60777d; font-weight: 600; padding: 9px 13px !important; border-radius: 10px; transition: background .2s, color .2s; }
+    .navbar .nav-link:hover, .navbar .nav-link.active { color: var(--teal-dark); background: var(--teal-soft); }
+    .portal-shell { max-width: 1240px; }
+    .welcome { padding: 42px 0 26px; }
+    .eyebrow { color: var(--teal); text-transform: uppercase; font-size: .75rem; font-weight: 800; letter-spacing: 1.5px; }
+    h1, h2, h3, h4, h5 { font-family: Manrope, sans-serif; letter-spacing: -.55px; }
+    .welcome h1 { font-size: clamp(1.8rem, 3vw, 2.45rem); font-weight: 800; margin: 8px 0 10px; }
+    .welcome p { color: var(--muted); max-width: 660px; margin: 0; line-height: 1.7; }
+    .privacy-note { display: flex; gap: 12px; align-items: center; padding: 16px 18px; border: 1px solid #cce9e3; border-radius: 16px; background: #effaf7; color: #225d58; }
+    .privacy-note .note-icon { flex: 0 0 38px; height: 38px; border-radius: 12px; background: #d8f2eb; display: grid; place-items: center; font-size: 1.15rem; }
+    .section-heading { display: flex; align-items: end; justify-content: space-between; gap: 12px; margin: 30px 0 16px; }
+    .section-heading h2 { font-weight: 800; font-size: 1.25rem; margin: 0 0 4px; }
+    .section-heading p { color: var(--muted); margin: 0; font-size: .91rem; }
+    .custom-card { border: 1px solid var(--line); border-radius: 18px; background: var(--white); box-shadow: var(--shadow); height: 100%; overflow: hidden; }
+    .custom-card .card-body { padding: clamp(20px, 2.3vw, 30px); }
+    .card-title { font-size: 1.08rem; font-weight: 800; margin-bottom: 7px; color: var(--ink); }
+    .card-description { color: var(--muted); font-size: .9rem; margin-bottom: 24px; line-height: 1.55; }
+    .section-icon { display: inline-grid; place-items: center; width: 42px; height: 42px; border-radius: 13px; background: var(--teal-soft); color: var(--teal-dark); margin-bottom: 16px; font-size: 1.1rem; }
+    .form-label { color: #405961; font-weight: 700; font-size: .86rem; margin-bottom: 7px; }
+    .form-control, .form-select { min-height: 46px; border: 1px solid #d7e5e3; border-radius: 11px; padding: 10px 13px; color: var(--ink); background-color: #fcfefe; }
+    textarea.form-control { min-height: 160px; border-radius: 12px; font-family: "DM Sans", sans-serif; font-size: .95rem; line-height: 1.65; resize: vertical; }
+    .form-control:focus, .form-select:focus { border-color: #56b9ac; box-shadow: 0 0 0 .22rem rgba(15, 118, 110, .12); background: white; }
+    .btn { border-radius: 10px; font-weight: 700; padding: 10px 17px; transition: transform .15s, box-shadow .15s, background .15s; }
+    .btn:focus-visible { outline: 3px solid #75cfc3; outline-offset: 2px; }
+    .btn-primary, .submit-btn { color: white; border: 1px solid var(--teal); background: var(--teal); box-shadow: none; }
+    .btn-primary:hover, .submit-btn:hover { color: white; background: var(--teal-dark); border-color: var(--teal-dark); transform: translateY(-1px); }
+    .btn-outline-secondary { border-color: #ccdcd9; color: #49636a; }
+    .btn-outline-secondary:hover { background: #f0f7f6; border-color: #afceca; color: var(--teal-dark); }
+    .btn-danger-soft { color: #a33b42; background: #fff3f3; border: 1px solid #f4d6d7; }
+    .btn-danger-soft:hover { background: #ffe7e8; color: #8c2931; }
+    .action-row { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 20px; }
+    .form-text { color: #7b9095; font-size: .8rem; }
+    .table-wrap { border: 1px solid var(--line); border-radius: 12px; overflow-x: auto; }
+    table { width: 100%; margin: 0 !important; border-collapse: separate; border-spacing: 0; min-width: 560px; }
+    table th { font-size: .78rem; text-transform: uppercase; letter-spacing: .55px; color: #6a8388; font-weight: 800; background: #f3f8f7 !important; padding: 14px 16px !important; border-bottom: 1px solid var(--line) !important; white-space: nowrap; }
+    table td { font-size: .9rem; padding: 14px 16px !important; color: #344f57; vertical-align: middle; border-bottom: 1px solid #edf3f2 !important; }
+    table tbody tr:last-child td { border-bottom: 0 !important; }
+    #recordsTable, #viewAllEMRList, #viewAllUserForEMR, #viewAddAccessList { box-shadow: none; }
+    #recordsTable th, #recordsTable td, #viewAllEMRList th, #viewAllEMRList td, #viewAllUserForEMR th, #viewAllUserForEMR td, #viewAddAccessList th, #viewAddAccessList td { border-left: 0; border-right: 0; border-top: 0; text-align: left; }
+    #recordsTable th, #viewAllEMRList th, #viewAllUserForEMR th, #viewAddAccessList th { background-color: #f3f8f7; color: #6a8388; }
+    .table-empty { color: var(--muted); text-align: center; padding: 28px 16px; }
+    .result-area { min-height: 170px; }
+    .result-placeholder { display: grid; place-items: center; min-height: 170px; padding: 26px; color: #82969a; text-align: center; border: 1px dashed #cfe0dd; border-radius: 12px; background: #fbfdfd; }
+    .result-placeholder .placeholder-icon { font-size: 1.7rem; margin-bottom: 8px; }
+    .access-grid { display: grid; grid-template-columns: repeat(2, minmax(0,1fr)); gap: 22px; }
+    .page-footer { color: #8aa0a3; font-size: .82rem; padding: 30px 0 40px; }
+    .required-note { color: #82969a; font-size: .8rem; }
+    @media (max-width: 767.98px) {
+      .welcome { padding-top: 30px; }
+      .section-heading { align-items: start; flex-direction: column; }
+      .custom-card .card-body { padding: 21px; }
+      .action-row .btn { flex: 1 1 130px; }
+      .privacy-note { align-items: start; }
     }
-    .navbar .navbar-brand {
-      color: white;
-      font-weight: 700;
-      font-size: 24px;
-    }
-    .navbar .navbar-nav .nav-link {
-      color: white;
-      font-weight: 500;
-      transition: color 0.3s;
-      text-decoration: none;
-    }
-    .navbar .navbar-nav .nav-link:hover,
-    .navbar .navbar-nav .nav-item.active .nav-link {
-      color: #f39c12;
-    }
-    .jumbotron {
-      background-color: #2c3e50;
-      color: white;
-      padding: 20px 20px;
-      border-radius: 0;
-      margin-bottom: 0;
-      animation: fadeIn 1s ease-in-out;
-    }
-    .jumbotron .display-4 {
-      font-size: 30px;
-      font-weight: 700;
-      animation: slideInDown 1s ease-in-out;
-    }
-    .jumbotron .lead {
-      font-size: 18px;
-      font-weight: 400;
-      animation: slideInUp 1s ease-in-out;
-    }
-    .custom-card {
-      border-radius: 20px;
-      background-color: white;
-      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-      padding: 20px;
-      margin-top: -30px;
-      animation: fadeInUp 1s ease-in-out;
-    }
-    .register-text {
-      color: #2c3e50;
-      font-size: 30px;
-      margin-bottom: 20px;
-    }
-    .form-label {
-      color: #2c3e50;
-    }
-    .submit-btn {
-      background-color: #f39c12;
-      box-shadow: 5px 5px 5px rgba(0, 0, 0, 0.5);
-      width: 150px;
-      border: none;
-      color: white;
-      font-size: 18px;
-      font-weight: 600;
-      padding: 12px 25px;
-      border-radius: 30px;
-      transition: background-color 0.3s, color 0.3s;
-    }
-    .submit-btn:hover {
-      background-color: #e67e22;
-      color: white;
-    }
-    .submit-btn:focus,
-    .submit-btn:focus-visible {
-      background-color: #e67e22;
-      box-shadow: 2px 2px 2px rgba(0, 0, 0, 0.5);
-      transform: translateY(4px);
-    }
-    .form-control,
-    .form-select {
-      border-radius: 30px;
-      padding: 10px 20px;
-      font-size: 16px;
-    }
-    .form-control:focus,
-    .form-select:focus {
-      border-color: #f39c12;
-      box-shadow: 0 0 5px rgba(243, 156, 18, 0.5);
-    }
-    .card-body {
-      padding: 40px;
-    }
-    .card-title {
-      font-size: 24px;
-      font-weight: 700;
-      margin-bottom: 20px;
-    }
-    .card hr {
-      border-top: 2px solid #f39c12;
-      width: 50%;
-      margin: 20px auto;
-    }
-    #recordsTable,
-    #viewAllEMRList,
-    #viewAllUserForEMR,
-    #viewAddAccessList {
-      width: 100%;
-      border-collapse: collapse;
-      margin-top: 20px;
-      box-shadow: 0px 5px 5px rgba(0, 0, 0, 0.295);
-    }
-    #recordsTable th,
-    #recordsTable td,
-    #viewAllEMRList th,
-    #viewAllEMRList td,
-    #viewAllUserForEMR th,
-    #viewAllUserForEMR td,
-    #viewAddAccessList th,
-    #viewAddAccessList td {
-      border: 1px solid #dddddd;
-      text-align: left;
-      padding: 8px;
-      font-size: 16px;
-    }
-    #recordsTable th,
-    #viewAllEMRList th,
-    #viewAllUserForEMR th,
-    #viewAddAccessList th {
-      background-color: #2c3e50;
-      color: white;
-    }
-    #emrdata {
-      width: 100%;
-      height: 100%;
-      font-size: 20px;
-      font-family: "Times New Roman", Times, serif;
-      resize: none;
-    }
-    @keyframes fadeIn {
-      from { opacity: 0; }
-      to { opacity: 1; }
-    }
-    @keyframes slideInDown {
-      from { opacity: 0; transform: translateY(-20px); }
-      to { opacity: 1; transform: translateY(0); }
-    }
-    @keyframes slideInUp {
-      from { opacity: 0; transform: translateY(20px); }
-      to { opacity: 1; transform: translateY(0); }
-    }
-    @keyframes fadeInUp {
-      from { opacity: 0; transform: translateY(20px); }
-      to { opacity: 1; transform: translateY(0); }
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after { scroll-behavior: auto !important; transition-duration: .01ms !important; animation-duration: .01ms !important; animation-iteration-count: 1 !important; }
     }
   </style>
-  <title>Patient Application</title>
 </head>
 <body>
-  <!-- Navigation Bar -->
-  <nav class="navbar navbar-expand-lg navbar-dark">
-    <div class="container">
-      <a class="navbar-brand" href="index.html">🩺DeMR</a>
-      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
-        <span class="navbar-toggler-icon"></span>
-      </button>
+  <nav class="navbar navbar-expand-lg sticky-top">
+    <div class="container portal-shell">
+      <a class="navbar-brand" href="index.html"><span class="brand-mark" aria-hidden="true">✚</span> DeMR</a>
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation"><span class="navbar-toggler-icon"></span></button>
       <div class="collapse navbar-collapse" id="navbarNav">
-        <ul class="navbar-nav ms-auto">
-          <li class="nav-item">
-            <a class="nav-link" href="adminApplication.html">Admin Application</a>
-          </li>
-          <li class="nav-item active">
-            <a class="nav-link" href="patientApplication.html">Patient Application <span class="sr-only"></span></a>
-          </li>
-          <li class="nav-item">
-            <a class="nav-link" href="doctorApplication.html">Doctor Application</a>
-          </li>
+        <ul class="navbar-nav ms-auto gap-lg-1">
+          <li class="nav-item"><a class="nav-link" href="index.html">Home</a></li>
+          <li class="nav-item"><a class="nav-link" href="adminApplication.html">Admin portal</a></li>
+          <li class="nav-item"><a class="nav-link active" aria-current="page" href="patientApplication.html">Patient portal</a></li>
+          <li class="nav-item"><a class="nav-link" href="doctorApplication.html">Doctor portal</a></li>
         </ul>
       </div>
     </div>
   </nav>
 
-  <!-- Jumbotron Section -->
-  <div class="jumbotron jumbotron-fluid">
-    <div class="container text-center">
-      <h1 class="display-4" style="padding-top: 20px;">Patient Application Portal</h1>
-      <p class="lead">Our Patient application allows you to grant and revoke various accesses.</p>
-    </div>
-  </div>
+  <main class="container portal-shell pb-3">
+    <header class="welcome">
+      <div class="eyebrow">Your health, your control</div>
+      <h1>Welcome to your patient portal</h1>
+      <p>View electronic medical records and manage who can access or contribute to them. Your permissions should always be clear and intentional.</p>
+    </header>
 
-  <!-- Info Cards Section -->
-  <div class="container mt-5" id="accessManagementDiv">
-    <div class="row">
-      <div class="col-md-6" id="viewAccessDiv">
-        <div class="card text-center custom-card shadow h-100">
-          <div class="card-body">
-            <h5 class="card-title register-text">Manage Your EMR View Access</h5>
-            <hr />
-            <form method="POST" id="viewAccessF">
-              <div class="mb-3 row">
-                <label for="userEmail" class="col-sm-4 col-form-label form-label">User Email-id</label>
-                <div class="col-sm-8">
-                  <input type="email" placeholder="Enter user email" name="email" id="userEmail" class="form-control" required />
-                </div>
-              </div>
-              <div class="mb-3 row">
-                <label for="viewerEmail" class="col-sm-4 col-form-label form-label">Viewer Email-id</label>
-                <div class="col-sm-8">
-                  <input type="email" placeholder="Enter viewer email" name="email" id="viewerEmail" class="form-control" required />
-                </div>
-              </div>
-              <div class="mb-3 row">
-                <label for="emrID" class="col-sm-4 col-form-label form-label">EMR ID</label>
-                <div class="col-sm-8">
-                  <input type="text" placeholder="Enter EMR ID" name="EMR ID" id="emrID" class="form-control" required />
-                </div>
-              </div>
-              <br />
-              <div class="mb-3 row">
-                <div class="col-sm-12">
-                  <button type="submit" class="btn submit-btn" id="grantViewB">Grant</button> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-                  <button type="submit" class="btn submit-btn" id="revokeViewB">Revoke</button>
-                </div>
-              </div>
+    <aside class="privacy-note" aria-label="Privacy reminder">
+      <span class="note-icon" aria-hidden="true">🔐</span>
+      <div><strong>Privacy comes first</strong><div class="small mt-1">Double-check the email address and EMR ID before changing access. Only use synthetic data in development and demos.</div></div>
+    </aside>
+
+    <div class="section-heading" id="accessManagementDiv">
+      <div><h2>Access management</h2><p>Grant or revoke permissions for your records.</p></div>
+      <span class="required-note">Fields marked by the browser are required</span>
+    </div>
+
+    <div class="row g-4">
+      <section class="col-lg-6" id="viewAccessDiv">
+        <div class="card custom-card"><div class="card-body">
+          <span class="section-icon" aria-hidden="true">👁</span>
+          <h3 class="card-title">Medical record viewing</h3>
+          <p class="card-description">Choose who is allowed to view a specific electronic medical record.</p>
+          <form method="POST" id="viewAccessF">
+            <div class="mb-3"><label for="viewOwnerEmail" class="form-label">Patient email</label><input type="email" placeholder="patient@example.com" name="email" id="viewOwnerEmail" class="form-control" autocomplete="email" required /></div>
+            <div class="mb-3"><label for="viewerEmail" class="form-label">Viewer email</label><input type="email" placeholder="doctor@example.com" name="email" id="viewerEmail" class="form-control" required /></div>
+            <div class="mb-3"><label for="viewEmrId" class="form-label">EMR ID</label><input type="text" placeholder="Enter record identifier" name="EMR ID" id="viewEmrId" class="form-control" required /></div>
+            <div class="action-row"><button type="submit" class="btn btn-primary" id="grantViewB">Grant view access</button><button type="submit" class="btn btn-danger-soft" id="revokeViewB">Revoke access</button></div>
+          </form>
+        </div></div>
+      </section>
+      <section class="col-lg-6" id="addAccessDiv">
+        <div class="card custom-card"><div class="card-body">
+          <span class="section-icon" aria-hidden="true">🛡</span>
+          <h3 class="card-title">Record contribution access</h3>
+          <p class="card-description">Manage who may add information to the patient's record.</p>
+          <form method="POST" id="addAccessF">
+            <div class="mb-3"><label for="addOwnerEmail" class="form-label">Patient email</label><input type="email" placeholder="patient@example.com" name="email" id="addOwnerEmail" class="form-control" required /></div>
+            <div class="mb-3"><label for="adderEmail" class="form-label">Contributor email</label><input type="email" placeholder="clinician@example.com" name="email" id="adderEmail" class="form-control" required /></div>
+            <div class="action-row"><button type="submit" class="btn btn-primary" id="grantAddB">Grant contribution access</button><button type="submit" class="btn btn-danger-soft" id="revokeAddB">Revoke access</button></div>
+          </form>
+        </div></div>
+      </section>
+    </div>
+
+    <div class="section-heading" id="viewEMRDiv"><div><h2>Medical records</h2><p>Look up a record or retrieve the records associated with an account.</p></div></div>
+    <div class="row g-4">
+      <section class="col-lg-5">
+        <div class="card custom-card"><div class="card-body">
+          <span class="section-icon" aria-hidden="true">📄</span>
+          <h3 class="card-title">View a medical record</h3>
+          <p class="card-description">Enter the patient email and an EMR ID to request the record.</p>
+          <form method="GET" id="viewEMRFPatient">
+            <div class="mb-3"><label for="viewRecordOwnerEmail" class="form-label">Patient email</label><input type="email" placeholder="patient@example.com" name="email" id="viewRecordOwnerEmail" class="form-control" required /></div>
+            <div class="mb-3"><label for="lookupEmrId" class="form-label">EMR ID <span class="text-muted fw-normal">(optional)</span></label><input type="text" placeholder="Enter EMR ID" name="EMR ID" id="lookupEmrId" class="form-control" /></div>
+            <button type="submit" class="btn btn-primary w-100">Retrieve record</button>
+          </form>
+        </div></div>
+      </section>
+      <section class="col-lg-7">
+        <div class="card custom-card"><div class="card-body">
+          <span class="section-icon" aria-hidden="true">🩺</span>
+          <h3 class="card-title">Record content</h3>
+          <p class="card-description">The requested record appears here after a successful response.</p>
+          <div class="result-area">
+            <div class="result-placeholder" id="recordPlaceholder"><div><div class="placeholder-icon" aria-hidden="true">⌕</div><strong>No record loaded</strong><div class="small mt-1">Submit the form to request an EMR.</div></div></div>
+            <textarea name="emrcontent" placeholder="The requested medical record will appear here." id="emrdata" class="form-control" style="display:none" aria-label="Retrieved medical record content" readonly></textarea>
+          </div>
+        </div></div>
+      </section>
+    </div>
+
+    <div class="section-heading"><div><h2>Record overview</h2><p>Review record metadata returned by the ledger-backed application.</p></div></div>
+    <div class="row g-4">
+      <section class="col-lg-5">
+        <div class="card custom-card"><div class="card-body">
+          <span class="section-icon" aria-hidden="true">🗂</span>
+          <h3 class="card-title">Find all records</h3>
+          <p class="card-description">Request the current record list for a patient email.</p>
+          <div id="viewEMRListDiv">
+            <form id="viewEMRList" method="GET">
+              <div class="mb-3"><label for="listOwnerEmail" class="form-label">Patient email</label><input type="email" placeholder="patient@example.com" name="email" id="listOwnerEmail" class="form-control" required /></div>
+              <button type="submit" class="btn btn-primary w-100">Load record list</button>
             </form>
           </div>
-        </div>
-      </div>
-      <div class="col-md-6" id="addAccessDiv">
-        <div class="card text-center custom-card shadow h-100">
-          <div class="card-body">
-            <h5 class="card-title register-text">Manage Your EMR Add Access</h5>
-            <hr />
-            <form method="POST" id="addAccessF">
-              <br>
-              <div class="mb-3 row">
-                <label for="userEmail" class="col-sm-4 col-form-label form-label">User Email-id</label>
-                <div class="col-sm-8">
-                  <input type="email" placeholder="Enter user email" name="email" id="userEmail" class="form-control" required />
-                </div>
-              </div>
-              <br>
-              <div class="mb-3 row">
-                <label for="adderEmail" class="col-sm-4 col-form-label form-label">Adder Email-id</label>
-                <div class="col-sm-8">
-                  <input type="email" placeholder="Enter adder email" name="email" id="adderEmail" class="form-control" required />
-                </div>
-              </div>
-              <br>
-              <div class="mb-3 row">
-                <div class="col-sm-12">
-                  <button type="submit" class="btn submit-btn" id="grantAddB">Grant</button> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-                  <button type="submit" class="btn submit-btn" id="revokeAddB">Revoke</button>
-                </div>
-              </div>
-            </form>
-          </div>
-        </div>
-      </div>
+        </div></div>
+      </section>
+      <section class="col-lg-7">
+        <div class="card custom-card"><div class="card-body">
+          <h3 class="card-title">Your medical records</h3><p class="card-description">Record list returned by the backend.</p>
+          <div id="viewEMRListResults" class="table-wrap"><table id="viewAllEMRList"><thead><tr><th>Added by</th><th>Type</th><th>EMR content</th><th>Created</th><th>Access count</th></tr></thead><tbody></tbody></table></div>
+        </div></div>
+      </section>
     </div>
-    <br />
-    <hr>
-    <br>
-    <div class="row">
-      <div class="col-md-6" id="viewEMRDiv">
-        <div class="card text-center custom-card shadow h-100">
-          <div class="card-body">
-            <h5 class="card-title register-text">View Your EMR</h5>
-            <hr />
-            <form method="GET" id="viewEMRFPatient">
-              <br>
-              <div class="mb-3 row">
-                <label for="userEmail" class="col-sm-4 col-form-label form-label">User Email-id</label>
-                <div class="col-sm-8">
-                  <input type="email" placeholder="Enter user email" name="email" id="userEmail" class="form-control" required />
-                </div>
-              </div>
-              <br>
-              <div class="mb-3 row">
-                <label for="emrID" class="col-sm-4 col-form-label form-label">EMR ID</label>
-                <div class="col-sm-8">
-                  <input type="text" placeholder="EMR ID" name="EMR ID" id="emrID" class="form-control" />
-                </div>
-              </div>
-              <br />
-              <div class="mb-3 row">
-                <div class="col-sm-12">
-                  <button type="submit" class="btn submit-btn" style="width: 80%;">View</button>
-                </div>
-              </div>
-            </form>
-          </div>
-        </div>
-      </div>
-      <div class="col-md-6" id="viewEMRDiv">
-        <div class="card text-center custom-card shadow h-100">
-          <div class="card-body">
-            <h5 class="card-title register-text">Your EMR</h5>
-            <hr />
-            <div id="viewEMRDiv">
-              <textarea style="display: none" name="emrcontent" placeholder="After you click submit the button EMR will appear here" id="emrdata"></textarea>
-            </div>
-          </div>
-        </div>
-      </div>
+
+    <div class="section-heading"><div><h2>Permission directory</h2><p>Inspect which accounts can contribute to or view a specific record.</p></div></div>
+    <div class="row g-4">
+      <section class="col-lg-6">
+        <div class="card custom-card"><div class="card-body">
+          <span class="section-icon" aria-hidden="true">➕</span><h3 class="card-title">Contributor permissions</h3><p class="card-description">View accounts with permission to add to the patient's records.</p>
+          <div id="viewAddAccessListDiv"><form id="viewAddAccessList1" method="GET">
+            <div class="mb-3"><label for="addPermissionOwnerEmail" class="form-label">Patient email</label><input type="email" placeholder="patient@example.com" name="email" id="addPermissionOwnerEmail" class="form-control" required /></div>
+            <button type="submit" class="btn btn-outline-secondary w-100">Show contributor access</button>
+          </form></div>
+          <div class="table-wrap mt-4"><table id="viewAddAccessList"><thead><tr><th>Name</th><th>Email</th><th>Role</th></tr></thead><tbody></tbody></table></div>
+        </div></div>
+      </section>
+      <section class="col-lg-6">
+        <div class="card custom-card"><div class="card-body">
+          <span class="section-icon" aria-hidden="true">👥</span><h3 class="card-title">Record viewers</h3><p class="card-description">View accounts granted access to a specific EMR.</p>
+          <div id="viewUserForEMRDiv"><form id="viewUserForEMR" method="GET">
+            <div class="mb-3"><label for="viewPermissionOwnerEmail" class="form-label">Patient email</label><input type="email" placeholder="patient@example.com" name="email" id="viewPermissionOwnerEmail" class="form-control" required /></div>
+            <div class="mb-3"><label for="permissionEmrId" class="form-label">EMR ID</label><input type="text" placeholder="Enter record identifier" name="EMR ID" id="permissionEmrId" class="form-control" required /></div>
+            <button type="submit" class="btn btn-outline-secondary w-100">Show viewers</button>
+          </form></div>
+          <div class="table-wrap mt-4"><table id="viewAllUserForEMR"><thead><tr><th>Name</th><th>Email</th><th>Role</th></tr></thead><tbody></tbody></table></div>
+        </div></div>
+      </section>
     </div>
-    <br>
-    <hr>
-    <br>
-    <div class="row">
-      <div class="col-md-6">
-        <div class="card text-center custom-card shadow h-100">
-          <div class="card-body">
-            <h5 class="card-title register-text">View Your EMR List</h5>
-            <hr />
-            <div id="viewEMRListDiv">
-              <form id="viewEMRList" method="GET">
-                <div class="mb-3 row">
-                  <label for="userEmail" class="col-sm-4 col-form-label form-label">User Email-id</label>
-                  <div class="col-sm-8">
-                    <input type="email" placeholder="Enter user email" name="email" id="userEmail" class="form-control" required />
-                  </div>
-                </div>
-                <button type="submit" class="btn submit-btn" style="width: 80%;">Get all EMR</button>
-              </form>
-            </div>
-          </div>
-        </div>
-      </div>
-      <div class="col-md-6" id="viewEMRDiv">
-        <div class="card text-center custom-card shadow h-100">
-          <div class="card-body">
-            <h5 class="card-title register-text">Your EMR List</h5>
-            <hr />
-            <div id="viewEMRListDiv">
-              <table id="viewAllEMRList">
-                <thead>
-                  <tr>
-                    <th>Adder Email</th>
-                    <th>Type</th>
-                    <th>EMR Content</th>
-                    <th>Creation Date</th>
-                    <th>No. of users with access</th>
-                  </tr>
-                </thead>
-                <tbody></tbody>
-              </table>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-    <br>
-    <hr>
-    <br>
-    <div class="row">
-      <div class="col-md-6">
-        <div class="card text-center custom-card shadow h-100">
-          <div class="card-body">
-            <h5 class="card-title register-text">View All Users with Add access</h5>
-            <hr />
-            <div id="viewAddAccessListDiv">
-              <form id="viewAddAccessList1" method="GET">
-                <div class="mb-3 row">
-                  <label for="userEmail" class="col-sm-4 col-form-label form-label">User Email-id</label>
-                  <div class="col-sm-8">
-                    <input type="email" placeholder="Enter user email" name="email" id="userEmail" class="form-control" required />
-                  </div>
-                </div>
-                <button type="submit" class="btn submit-btn" style="width: 80%;">Get Access user list</button>
-              </form>
-            </div>
-          </div>
-        </div>
-      </div>
-      <div class="col-md-6" id="viewAddAccessListDiv">
-        <div class="card text-center custom-card shadow h-100">
-          <div class="card-body">
-            <h5 class="card-title register-text">Your EMR List</h5>
-            <hr />
-            <div id="viewAddAccessListDiv">
-              <table id="viewAddAccessList">
-                <thead>
-                  <tr>
-                    <th>Name</th>
-                    <th>Email</th>
-                    <th>Type</th>
-                  </tr>
-                </thead>
-                <tbody></tbody>
-              </table>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-    <br>
-    <hr>
-    <br>
-    <div class="row">
-      <div class="col-md-6">
-        <div class="card text-center custom-card shadow h-100">
-          <div class="card-body">
-            <h5 class="card-title register-text">View All Users who can access the EMR</h5>
-            <hr />
-            <div id="viewUserForEMRDiv">
-              <form id="viewUserForEMR" method="GET">
-                <div class="mb-3 row">
-                  <label for="userEmail" class="col-sm-4 col-form-label form-label">User Email-id</label>
-                  <div class="col-sm-8">
-                    <input type="email" placeholder="Enter user email" name="email" id="userEmail" class="form-control" required />
-                  </div>
-                </div>
-                <div class="mb-3 row">
-                  <label for="emrID" class="col-sm-4 col-form-label form-label">EMR ID</label>
-                  <div class="col-sm-8">
-                    <input type="text" placeholder="Enter EMR ID" name="EMR ID" id="emrID" class="form-control" required />
-                  </div>
-                </div>
-                <button type="submit" class="btn submit-btn" style="width: 80%;">Get user for EMR</button>
-              </form>
-            </div>
-          </div>
-        </div>
-      </div>
-      <div class="col-md-6" id="viewUserForEMRDiv">
-        <div class="card text-center custom-card shadow h-100">
-          <div class="card-body">
-            <h5 class="card-title register-text">Your EMR List</h5>
-            <hr />
-            <div id="viewUserForEMRDiv">
-              <table id="viewAllUserForEMR">
-                <thead>
-                  <tr>
-                    <th>Name</th>
-                    <th>Email</th>
-                    <th>Type</th>
-                  </tr>
-                </thead>
-                <tbody></tbody>
-              </table>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-    <br>
-    <hr>
-    <br>
-  </div>
-  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta1/dist/js/bootstrap.bundle.min.js"></script>
+
+    <footer class="page-footer d-flex flex-column flex-sm-row justify-content-between gap-2">
+      <span>© DeMR · Decentralized Electronic Medical Records</span>
+      <span>Healthcare UI prototype · Use synthetic data for testing</span>
+    </footer>
+  </main>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+  <script>
+    // Keep the existing jQuery API hooks and IDs, while making the empty state clear.
+    $(function () {
+      $("#viewEMRFPatient").on("submit", function () {
+        $("#recordPlaceholder").hide();
+      });
+      $("#viewAllEMRList tbody, #viewAddAccessList tbody, #viewAllUserForEMR tbody").each(function () {
+        if (!this.children.length) {
+          const table = this.closest("table");
+          const cols = table.querySelectorAll("thead th").length;
+          const row = document.createElement("tr");
+          const cell = document.createElement("td");
+          cell.colSpan = cols;
+          cell.className = "table-empty";
+          cell.textContent = "Submit the form to load results.";
+          row.appendChild(cell);
+          this.appendChild(row);
+        }
+      });
+    });
+  </script>
 </body>
 </html>
