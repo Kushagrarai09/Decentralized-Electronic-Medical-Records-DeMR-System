@@ -18,8 +18,21 @@ async function registerUser(userType) {
     );
     const ccp = JSON.parse(fs.readFileSync(ccpPath, "utf8"));
 
-    const caURL = ccp.certificateAuthorities["ca.org1.example.com"].url;
-    const ca = new FabricCAServices(caURL);
+    const caInfo = ccp.certificateAuthorities["ca.org1.example.com"];
+    const caTLSCACerts = caInfo.tlsCACerts && caInfo.tlsCACerts.pem;
+    if (!caTLSCACerts || (Array.isArray(caTLSCACerts) && caTLSCACerts.length === 0)) {
+      throw new Error(
+        "CA TLS trust certificate is missing from the connection profile. " +
+        "Regenerate the connection profile and verify its CA certificate before provisioning identities."
+      );
+    }
+
+    // Use the trust root generated into the connection profile and verify the CA server.
+    const ca = new FabricCAServices(
+      caInfo.url,
+      { trustedRoots: caTLSCACerts, verify: true },
+      caInfo.caName
+    );
 
     const walletPath = path.join(process.cwd(), "wallet");
     const wallet = await Wallets.newFileSystemWallet(walletPath);
@@ -70,7 +83,7 @@ async function registerUser(userType) {
     };
     await wallet.put(userType, x509Identity);
     console.log(
-      `Successfully registered and enrolled admin user "${userType}" and imported it into the wallet`
+      `Successfully registered and enrolled user "${userType}" and imported it into the wallet`
     );
   } catch (error) {
     console.error(`Failed to register user "${userType}": ${error}`);
