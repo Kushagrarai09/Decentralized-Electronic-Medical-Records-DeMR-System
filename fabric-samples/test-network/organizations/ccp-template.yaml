@@ -32,4 +32,4 @@ certificateAuthorities:
         - |
           ${CAPEM}
     httpOptions:
-      verify: false
+      verify: true
