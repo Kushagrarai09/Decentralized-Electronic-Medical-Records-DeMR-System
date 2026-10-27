@@ -521,6 +521,7 @@
     (function(){
       var pending=null;
       function status(id,message,kind){var e=document.getElementById(id);if(!e)return;e.className='inline-status is-'+kind;e.textContent=message;}
+      window.demrShowStatus=function(message,kind){status('patientGlobalStatus',message,kind);};
       function busy(form,on){if(!form)return;form.querySelectorAll('button[type="submit"]').forEach(function(b){if(on){b.dataset.label=b.textContent;b.disabled=true;b.textContent='Loading…';}else{b.disabled=false;if(b.dataset.label)b.textContent=b.dataset.label;}});}
       document.querySelectorAll('form').forEach(function(f){f.addEventListener('submit',function(){busy(f,true);window.setTimeout(function(){busy(f,false);},12000);});});
       var search=document.getElementById('recordSearch');
